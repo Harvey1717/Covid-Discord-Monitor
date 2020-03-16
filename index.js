@@ -1,7 +1,7 @@
 const got = require('got');
 const cheerio = require('cheerio');
 const log = require('@harvey1717/logger')();
-const config = require('./config.json');
+// const config = require('./config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 (() => {
