@@ -14,7 +14,7 @@ let infectedCountTemp = {
 };
 
 function getDelayTime() {
-  const startTimeSplit = config.startTime.split(':');
+  const startTimeSplit = process.env.startTime.split(':');
   const startTimeDate = new Date();
   startTimeDate.setHours(startTimeSplit[0]);
   startTimeDate.setMinutes(startTimeSplit[1]);
@@ -97,7 +97,7 @@ function getIncreaseAmount(infectedCount) {
     ]
   };
   got
-    .post(config.webhookURL, {
+    .post(process.env.webhookURL, {
       json: jsonData
     })
     .then(res => {
