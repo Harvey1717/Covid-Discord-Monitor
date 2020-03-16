@@ -1,6 +1,7 @@
 const got = require('got');
 const cheerio = require('cheerio');
 const log = require('@harvey1717/logger')();
+const config = require('./config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 (() => {
@@ -13,7 +14,7 @@ let infectedCountTemp = {
 };
 
 function getDelayTime() {
-  const startTimeSplit = process.env.startTime.split(':');
+  const startTimeSplit = config.startTime.split(':');
   const startTimeDate = new Date();
   startTimeDate.setHours(startTimeSplit[0]);
   startTimeDate.setMinutes(startTimeSplit[1]);
@@ -59,7 +60,7 @@ function getIncreaseAmount(infectedCount) {
     increaseAmountStatus = infectedCount - infectedCountTemp;
   }
   got
-    .post(process.env.webhookURL, {
+    .post(config.webhookURL, {
       json: {
         username: 'COVID-19',
         avatar_url:
