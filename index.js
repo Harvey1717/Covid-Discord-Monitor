@@ -9,8 +9,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 })();
 
 let infectedCountTemp = {
-  count: undefined,
-  lastUpdated: undefined
+  count: 'none',
+  lastUpdated: 'none'
 };
 
 function getDelayTime() {
@@ -26,7 +26,7 @@ function getDelayTime() {
     startTimeDate.setDate(startTimeDate.getDate() + 1);
   }
   const delayTime = startTimeDate - new Date();
-  startMonitor(delayTime);
+  startMonitor(0);
 }
 
 async function startMonitor(delayTime) {
@@ -54,49 +54,51 @@ function getInfectedCount() {
 
 function getIncreaseAmount(infectedCount) {
   let increaseAmountStatus = undefined;
-  if (infectedCountTemp.lastUpdated === null) {
+  if (infectedCountTemp.lastUpdated === 'none') {
     increaseAmountStatus = 'No past data';
   } else {
     increaseAmountStatus = infectedCount - infectedCountTemp;
   }
-  got
-    .post(config.webhookURL, {
-      json: {
-        username: 'COVID-19',
-        avatar_url:
-          'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
-        content: 'Corona Virus Update',
-        embeds: [
+  const jsonData = {
+    username: 'COVID-19',
+    avatar_url:
+      'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
+    content: 'Corona Virus Update',
+    embeds: [
+      {
+        title: 'COVID-19 cases in the UK',
+        url:
+          'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
+        description: 'Data is fetched from URL above and may not be accurate.',
+        color: parseInt('FF0000', 16),
+        timestamp: new Date().toISOString(),
+        footer: {
+          text: 'Thanks Mattia for the idea'
+        },
+        thumbnail: {
+          url:
+            'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
+        },
+        fields: [
           {
-            title: 'COVID-19 cases in the UK',
-            url:
-              'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
-            color: parseInt('FF0000', 16),
-            timestamp: new Date().toISOString(),
-            footer: {
-              text: 'Thanks Mattia for the idea'
-            },
-            thumbnail: {
-              url:
-                'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
-            },
-            fields: [
-              {
-                name: 'New Count',
-                value: infectedCount
-              },
-              {
-                name: 'Old Count',
-                value: infectedCountTemp.count
-              },
-              {
-                name: `Increase (Since ${infectedCountTemp.lastUpdated})`,
-                value: increaseAmountStatus
-              }
-            ]
+            name: 'New Count',
+            value: infectedCount
+          },
+          {
+            name: 'Old Count',
+            value: infectedCountTemp.count
+          },
+          {
+            name: `Increase (Since ${infectedCountTemp.lastUpdated})`,
+            value: increaseAmountStatus
           }
         ]
       }
+    ]
+  };
+  got
+    .post(config.webhookURL, {
+      json: jsonData
     })
     .then(res => {
       console.log(res.statusCode);
