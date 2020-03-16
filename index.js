@@ -60,47 +60,44 @@ function getIncreaseAmount(infectedCount) {
     increaseAmountStatus = infectedCount - infectedCountTemp;
   }
   got
-    .post(
-      'https://discordapp.com/api/webhooks/689195901993877763/KlzeuuPtrIOilnDJjtfh66WfIhcW1JdnXpBVBvKDoiKroKdzlrIEyDCmNoSRUUWTfzgn',
-      {
-        json: {
-          username: 'COVID-19',
-          avatar_url:
-            'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
-          content: 'Corona Virus Update',
-          embeds: [
-            {
-              title: 'COVID-19 cases in the UK',
+    .post(config.webhookURL, {
+      json: {
+        username: 'COVID-19',
+        avatar_url:
+          'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
+        content: 'Corona Virus Update',
+        embeds: [
+          {
+            title: 'COVID-19 cases in the UK',
+            url:
+              'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
+            color: parseInt('FF0000', 16),
+            timestamp: new Date().toISOString(),
+            footer: {
+              text: 'Thanks Mattia for the idea'
+            },
+            thumbnail: {
               url:
-                'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
-              color: parseInt('FF0000', 16),
-              timestamp: new Date().toISOString(),
-              footer: {
-                text: 'Thanks Mattia for the idea'
+                'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
+            },
+            fields: [
+              {
+                name: 'New Count',
+                value: infectedCount
               },
-              thumbnail: {
-                url:
-                  'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
+              {
+                name: 'Old Count',
+                value: infectedCountTemp.count
               },
-              fields: [
-                {
-                  name: 'New Count',
-                  value: infectedCount
-                },
-                {
-                  name: 'Old Count',
-                  value: infectedCountTemp.count
-                },
-                {
-                  name: `Increase (Since ${infectedCountTemp.lastUpdated})`,
-                  value: increaseAmountStatus
-                }
-              ]
-            }
-          ]
-        }
+              {
+                name: `Increase (Since ${infectedCountTemp.lastUpdated})`,
+                value: increaseAmountStatus
+              }
+            ]
+          }
+        ]
       }
-    )
+    })
     .then(res => {
       console.log(res.statusCode);
       infectedCountTemp.count = infectedCount;
