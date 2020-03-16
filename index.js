@@ -26,7 +26,7 @@ function getDelayTime() {
     startTimeDate.setDate(startTimeDate.getDate() + 1);
   }
   const delayTime = startTimeDate - new Date();
-  startMonitor(0);
+  startMonitor(delayTime);
 }
 
 async function startMonitor(delayTime) {
@@ -69,12 +69,12 @@ function getIncreaseAmount(infectedCount) {
         title: 'COVID-19 cases in the UK',
         url:
           'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
-        description: 'Data is fetched from URL above and may not be accurate.',
+        description: `Data is fetched from URL above and may not be accurate. Updates will be sent once per day`,
         color: parseInt('FF0000', 16),
         timestamp: new Date().toISOString(),
-        footer: {
-          text: 'Thanks Mattia for the idea'
-        },
+        // footer: {
+        //   text: ''
+        // },
         thumbnail: {
           url:
             'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
