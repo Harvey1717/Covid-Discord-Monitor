@@ -1,16 +1,23 @@
 const got = require('got');
-const cheerio = require('cheerio');
 const log = require('@harvey1717/logger')();
 const config = require('./config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-(() => {
-  getDelayTime();
-})();
+start();
 
-let infectedCountTemp = {
-  count: 'none',
-  lastUpdated: 'none'
+async function start() {
+  if (config.mode === 'AT_TIME') {
+    getDelayTime();
+  } else if (config.mode === 'AT_INTERVAL') {
+    log.log(`Waiting for ${config.delayTime} minutes`);
+    await delay(config.delayTime * 60000);
+    getInfectedCount();
+  }
+}
+
+let countryDataTemp = {
+  countryData: undefined,
+  lastUpdated: 'No Past Update'
 };
 
 function getDelayTime() {
@@ -36,29 +43,17 @@ async function startMonitor(delayTime) {
 }
 
 function getInfectedCount() {
-  got(
-    'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases'
-  )
+  got('https://coronavirus-19-api.herokuapp.com/countries')
+    .json()
     .then(response => {
-      const $ = cheerio.load(response.body);
-      const status = $(
-        '#contents > div.gem-c-govspeak.govuk-govspeak.direction-ltr > div > p:nth-child(12)'
-      ).text();
-      const infectedCountAtEnd = status.split('were confirmed as positive')[0].split(' ');
-      const infectedCount = infectedCountAtEnd[infectedCountAtEnd.length - 2];
-      console.log(infectedCount);
-      getIncreaseAmount(infectedCount);
+      const countryData = response.find(countryData => countryData.country === 'UK');
+      console.log(countryData);
+      sendHook(countryData);
     })
     .catch(err => console.log(err));
 }
 
-function getIncreaseAmount(infectedCount) {
-  let increaseAmountStatus = undefined;
-  if (infectedCountTemp.lastUpdated === 'none') {
-    increaseAmountStatus = 'No past data';
-  } else {
-    increaseAmountStatus = infectedCount - infectedCountTemp;
-  }
+function sendHook(countryData) {
   const jsonData = {
     username: 'COVID-19',
     avatar_url:
@@ -67,44 +62,74 @@ function getIncreaseAmount(infectedCount) {
     embeds: [
       {
         title: 'COVID-19 cases in the UK',
-        url:
-          'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
-        description: `Data is fetched from URL above and may not be accurate. Updates will be sent once per day`,
+        // url:
+        // 'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
+        // description: `Data is fetched from URL above and may not be accurate.`,
         color: parseInt('FF0000', 16),
         timestamp: new Date().toISOString(),
-        // footer: {
-        //   text: ''
-        // },
         thumbnail: {
           url:
             'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
         },
         fields: [
           {
-            name: 'New Count',
-            value: infectedCount
+            name: 'Last Update',
+            value: countryDataTemp.lastUpdated
           },
           {
-            name: 'Old Count',
-            value: infectedCountTemp.count
+            name: 'Cases',
+            value: `${countryData.cases} (+${
+              countryDataTemp.countryData
+                ? countryData.cases - countryDataTemp.countryData.cases
+                : 'No past data'
+            })`
           },
           {
-            name: `Increase (Since ${infectedCountTemp.lastUpdated})`,
-            value: increaseAmountStatus
+            name: 'Deaths',
+            value: `${countryData.deaths} (+${
+              countryDataTemp.countryData
+                ? countryData.deaths - countryDataTemp.countryData.deaths
+                : 'No past data'
+            })`
+          },
+          {
+            name: 'Active',
+            value: `${countryData.active} (+${
+              countryDataTemp.countryData
+                ? countryData.active - countryDataTemp.countryData.active
+                : 'No past data'
+            })`
+          },
+          {
+            name: 'Recovered',
+            value: `${countryData.recovered} (+${
+              countryDataTemp.countryData
+                ? countryData.recovered - countryDataTemp.countryData.recovered
+                : 'No past data'
+            })`
+          },
+          {
+            name: 'Critical',
+            value: `${countryData.critical} (+${
+              countryDataTemp.countryData
+                ? countryData.critical - countryDataTemp.countryData.critical
+                : 'No past data'
+            })`
           }
         ]
       }
     ]
   };
+  console.log(jsonData.embeds[0].fields);
   got
     .post(config.webhookURL, {
       json: jsonData
     })
     .then(res => {
       console.log(res.statusCode);
-      infectedCountTemp.count = infectedCount;
-      infectedCountTemp.lastUpdated = new Date().toISOString;
-      getDelayTime();
+      countryDataTemp.countryData = countryData;
+      countryDataTemp.lastUpdated = new Date().toISOString();
+      start();
     })
     .catch(err => console.log(err));
 }
