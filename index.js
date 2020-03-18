@@ -17,7 +17,7 @@ async function start() {
 
 let countryDataTemp = {
   countryData: undefined,
-  lastUpdated: 'No Past Update'
+  lastUpdated: 'No Past Update.'
 };
 
 function getDelayTime() {
