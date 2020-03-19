@@ -1,4 +1,5 @@
 const got = require('got');
+const _ = require('lodash');
 const log = require('@harvey1717/logger')();
 const config = require('./config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -48,7 +49,11 @@ function getInfectedCount() {
     .then(response => {
       const countryData = response.find(countryData => countryData.country === 'UK');
       console.log(countryData);
-      sendHook(countryData);
+      if (_.isEqual(countryDataTemp.countryData, countryData)) {
+        sendHook(countryData);
+      } else {
+        console.log('No Change');
+      }
     })
     .catch(err => console.log(err));
 }
@@ -62,9 +67,6 @@ function sendHook(countryData) {
     embeds: [
       {
         title: 'COVID-19 cases in the UK',
-        // url:
-        // 'https://www.gov.uk/guidance/coronavirus-covid-19-information-for-the-public#number-of-cases',
-        // description: `Data is fetched from URL above and may not be accurate.`,
         color: parseInt('FF0000', 16),
         timestamp: new Date().toISOString(),
         thumbnail: {
@@ -127,9 +129,14 @@ function sendHook(countryData) {
     })
     .then(res => {
       console.log(res.statusCode);
-      countryDataTemp.countryData = countryData;
-      countryDataTemp.lastUpdated = new Date().toISOString();
-      start();
+      finish(countryData);
     })
     .catch(err => console.log(err));
+}
+
+function finish(countryData) {
+  console.log(countryData);
+  countryDataTemp.countryData = countryData;
+  countryDataTemp.lastUpdated = new Date().toISOString();
+  start();
 }
