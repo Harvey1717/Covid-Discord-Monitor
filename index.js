@@ -48,8 +48,8 @@ function getInfectedCount() {
     .json()
     .then(response => {
       const countryData = response.find(countryData => countryData.country === 'UK');
-      console.log(countryData);
       if (_.isEqual(countryDataTemp.countryData, countryData)) {
+        console.log(countryData);
         sendHook(countryData);
       } else {
         console.log('No Change');
