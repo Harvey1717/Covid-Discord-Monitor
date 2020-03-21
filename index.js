@@ -10,7 +10,8 @@ class CoronaMonitor {
   constructor({ name, apiURL, webhookURL }) {
     this.monitorName = name;
     this.apiURL = apiURL;
-    this.webhookURL = webhookURL;
+    this.webhookURL =
+      'https://discordapp.com/api/webhooks/691021806802436106/7Sxpnyth7XeNYHpVa5uivtdfvFqj9zXFwkZlWXyOr6ZGDXBSNslbxAAsW4CksfKCOEFT';
     this.italyData = undefined;
     this.current = undefined;
     this.last = {
@@ -34,9 +35,12 @@ class CoronaMonitor {
     got(this.apiURL)
       .json()
       .then(response => {
-        if (_.isEqual(this.last.countryData, response)) {
+        if (
+          this.last.cases.value === response.cases &&
+          this.last.deaths.value === response.deaths
+        ) {
           log.log(`[ ${this.monitorName} ] --> No Change.`);
-          start();
+          this.run();
         } else {
           log.log(`[ ${this.monitorName} ] --> New Change.`);
           this.current = response;
@@ -142,15 +146,19 @@ class CoronaMonitor {
     sendHook(this.monitorName, this.webhookURL, embed)
       .then(res => {
         log.log(`[ ${this.monitorName} ] --> Sent Webhook [${res}]`);
-        this.last = this.current;
-        this.current = undefined;
-        this.italyData = undefined;
-        this.last.previousUpdate = new Date().toISOString();
-        this.run();
+        this.cleanup();
       })
       .catch(err => {
         throw err;
       });
+  }
+
+  cleanup() {
+    this.last = this.current;
+    this.current = undefined;
+    this.italyData = undefined;
+    this.last.previousUpdate = new Date().toISOString();
+    this.run();
   }
 }
 
