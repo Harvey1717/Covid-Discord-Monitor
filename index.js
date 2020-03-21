@@ -4,12 +4,18 @@ const log = require('@harvey1717/logger')();
 const config = require('./config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+let countryDataTemp = {
+  countryData: undefined,
+  lastUpdated: 'No Past Update.'
+};
+
 start();
 
 async function start() {
   if (config.mode === 'AT_TIME') {
     getDelayTime();
   } else if (config.mode === 'AT_INTERVAL') {
+    console.log();
     if (countryDataTemp.countryData === undefined) {
       getInfectedCount();
     } else {
@@ -19,11 +25,6 @@ async function start() {
     }
   }
 }
-
-let countryDataTemp = {
-  countryData: undefined,
-  lastUpdated: 'No Past Update.'
-};
 
 function getDelayTime() {
   const startTimeSplit = config.startTime.split(':');
