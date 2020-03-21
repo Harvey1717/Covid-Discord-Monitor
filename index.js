@@ -66,18 +66,18 @@ function getInfectedCount() {
 function sendHook(countryData) {
   const jsonData = {
     username: 'COVID-19',
-    // avatar_url:
-    // 'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
+    avatar_url:
+      'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
     content: 'Corona Virus Update',
     embeds: [
       {
         title: 'COVID-19 cases',
         color: parseInt('FF0000', 16),
         timestamp: new Date().toISOString(),
-        thumbnail: {
-          url:
-            'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
-        },
+        // thumbnail: {
+        //   url:
+        //     'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
+        // },
         fields: [
           {
             name: 'Last Update',
