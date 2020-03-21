@@ -4,17 +4,17 @@
     {
       "name": "UK",
       "apiURL": "https://corona.lmao.ninja/countries/UK",
-      "webhookURL": "https://discordapp.com/api/webhooks/691021806802436106/7Sxpnyth7XeNYHpVa5uivtdfvFqj9zXFwkZlWXyOr6ZGDXBSNslbxAAsW4CksfKCOEFT"
+      "webhookURL": "https://discordapp.com/api/webhooks/689195901993877763/KlzeuuPtrIOilnDJjtfh66WfIhcW1JdnXpBVBvKDoiKroKdzlrIEyDCmNoSRUUWTfzgn"
     },
     {
       "name": "Italy",
       "apiURL": "https://corona.lmao.ninja/countries/Italy",
-      "webhookURL": "https://discordapp.com/api/webhooks/691021806802436106/7Sxpnyth7XeNYHpVa5uivtdfvFqj9zXFwkZlWXyOr6ZGDXBSNslbxAAsW4CksfKCOEFT"
+      "webhookURL": "https://discordapp.com/api/webhooks/691029977164021800/OSxhloHAB1t_7jqh5x2HrHyYpVpFkQ1BZ-_cZyaIzTBP7qj8mG4l_EIZQi8OgFIbCoNT"
     },
     {
       "name": "Worldwide",
       "apiURL": "https://corona.lmao.ninja/all",
-      "webhookURL": "https://discordapp.com/api/webhooks/691021806802436106/7Sxpnyth7XeNYHpVa5uivtdfvFqj9zXFwkZlWXyOr6ZGDXBSNslbxAAsW4CksfKCOEFT"
+      "webhookURL": "https://discordapp.com/api/webhooks/690988933441519696/mC4eFQBbRlIie-8uQo9GgDuXPOMmXrFxhZjs-luRbufsEk1Iik0hOZei3SIGpsmeHmPe"
     }
   ]
 }
