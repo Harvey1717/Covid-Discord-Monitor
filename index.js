@@ -10,9 +10,13 @@ async function start() {
   if (config.mode === 'AT_TIME') {
     getDelayTime();
   } else if (config.mode === 'AT_INTERVAL') {
-    log.log(`Waiting for ${config.delayTime} minutes`);
-    await delay(config.delayTime * 60000);
-    getInfectedCount();
+    if (countryDataTemp.countryData === undefined) {
+      getInfectedCount();
+    } else {
+      log.log(`Waiting for ${config.delayTime} minutes`);
+      await delay(config.delayTime * 60000);
+      getInfectedCount();
+    }
   }
 }
 
