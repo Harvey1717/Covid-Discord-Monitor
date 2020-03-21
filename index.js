@@ -44,18 +44,15 @@ async function startMonitor(delayTime) {
 }
 
 function getInfectedCount() {
-  got('https://coronavirus-19-api.herokuapp.com/countries')
+  got(config.apiURL)
     .json()
     .then(response => {
-      const countryData = response.find(countryData => countryData.country === 'UK');
-      // console.log(countryData);
-      // console.log(countryDataTemp.countryData);
-      if (_.isEqual(countryDataTemp.countryData, countryData)) {
+      if (_.isEqual(countryDataTemp.countryData, response)) {
         console.log('No Change');
         start();
       } else {
-        console.log(countryData);
-        sendHook(countryData);
+        console.log(response);
+        sendHook(response);
       }
     })
     .catch(err => console.log(err));
