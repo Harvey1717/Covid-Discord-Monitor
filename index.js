@@ -62,11 +62,11 @@ function sendHook(countryData) {
   const jsonData = {
     username: 'COVID-19',
     // avatar_url:
-      // 'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
+    // 'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
     content: 'Corona Virus Update',
     embeds: [
       {
-        title: 'COVID-19 cases in the UK',
+        title: 'COVID-19 cases',
         color: parseInt('FF0000', 16),
         timestamp: new Date().toISOString(),
         thumbnail: {
