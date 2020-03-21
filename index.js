@@ -11,7 +11,7 @@ class CoronaMonitor {
     this.monitorName = name;
     this.apiURL = apiURL;
     this.webhookURL =
-      'https://discordapp.com/api/webhooks/691021806802436106/7Sxpnyth7XeNYHpVa5uivtdfvFqj9zXFwkZlWXyOr6ZGDXBSNslbxAAsW4CksfKCOEFT';
+      webhookURL;
     this.italyData = undefined;
     this.current = undefined;
     this.last = {
