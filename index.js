@@ -61,8 +61,8 @@ function getInfectedCount() {
 function sendHook(countryData) {
   const jsonData = {
     username: 'COVID-19',
-    avatar_url:
-      'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
+    // avatar_url:
+      // 'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
     content: 'Corona Virus Update',
     embeds: [
       {
