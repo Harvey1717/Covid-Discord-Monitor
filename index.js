@@ -1,147 +1,185 @@
 const got = require('got');
 const _ = require('lodash');
+const moment = require('moment');
 const log = require('@harvey1717/logger')();
 const config = require('./config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-let countryDataTemp = {
-  countryData: undefined,
-  lastUpdated: 'No Past Update.'
-};
+const numberFormatter = new Intl.NumberFormat('en-GB');
+class CoronaMonitor {
+  constructor({ name, apiURL, webhookURL }) {
+    this.monitorName = name;
+    this.apiURL = apiURL;
+    this.webhookURL = webhookURL;
+    this.italyData = undefined;
+    this.current = undefined;
+    this.last = {
+      cases: { value: 0 },
+      deaths: { value: 0 },
+      previousUpdate: undefined
+    };
+    this.run();
+  }
 
-start();
-
-async function start() {
-  if (config.mode === 'AT_TIME') {
-    getDelayTime();
-  } else if (config.mode === 'AT_INTERVAL') {
-    console.log();
-    if (countryDataTemp.countryData === undefined) {
-      getInfectedCount();
+  async run() {
+    if (this.last.previousUpdate === undefined) {
+      this.getInfectedCount();
     } else {
-      log.log(`Waiting for ${config.delayTime} minutes`);
+      log.log(`[ ${this.monitorName} ] --> Waiting for ${config.delayTime} minutes`);
       await delay(config.delayTime * 60000);
-      getInfectedCount();
+      this.getInfectedCount();
+    }
+  }
+  getInfectedCount() {
+    got(this.apiURL)
+      .json()
+      .then(response => {
+        if (_.isEqual(this.last.countryData, response)) {
+          log.log(`[ ${this.monitorName} ] --> No Change.`);
+          start();
+        } else {
+          log.log(`[ ${this.monitorName} ] --> New Change.`);
+          this.current = response;
+          this.filterData();
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  filterData() {
+    const reqData = ['cases', 'deaths'];
+    for (let key of Object.keys(this.current)) {
+      if (!reqData.includes(key)) delete this.current[key];
+    }
+    this.calculateIncreases();
+  }
+
+  calculateIncreases() {
+    for (let key of Object.keys(this.current)) {
+      if (this.last.previousUpdate === undefined) {
+        this.current[key] = {
+          value: this.current[key],
+          increase: 0,
+          percentageIncrease: 0
+        };
+      } else {
+        const increase = this.current[key] - this.last[key].value;
+        this.current[key] = {
+          value: this.current[key],
+          increase: increase,
+          percentageIncrease: (increase / this.last[key].value) * 100
+        };
+      }
+    }
+    console.log(this.current);
+    if (this.monitorName === 'UK') {
+      this.getItaly14DaysAgo();
+    } else {
+      this.formatEmbed();
+    }
+  }
+
+  getItaly14DaysAgo() {
+    got('https://pomber.github.io/covid19/timeseries.json')
+      .json()
+      .then(response => {
+        const italyDataPerDay = response['Italy'];
+        const fourteenDaysAgo = moment()
+          .subtract(14, 'days')
+          .format('YYYY-M-D');
+        const italyDataUnformatted = italyDataPerDay.filter(
+          day => day.date === fourteenDaysAgo
+        )[0];
+        this.italyData = {
+          cases: italyDataUnformatted.confirmed,
+          deaths: italyDataUnformatted.deaths
+        };
+        this.formatEmbed();
+      })
+      .catch(err => console.log(err));
+  }
+
+  formatEmbed() {
+    const { cases, deaths } = this.current;
+    const embed = {
+      title: 'COVID-19 Cases',
+      color: parseInt('0000ff', 16),
+      timestamp: new Date().toISOString(),
+      fields: [
+        {
+          name: 'Previous Change',
+          value: this.last.previousUpdate ? this.last.previousUpdate : 'No previous data.'
+        },
+        {
+          name: 'Cases',
+          value: `${numberFormatter.format(
+            this.last.cases.value
+          )} => ${numberFormatter.format(cases.value)} \`(+${cases.increase})\` ⬆️${
+            cases.percentageIncrease
+          }%`
+        },
+        {
+          name: 'Deaths',
+          value: `${numberFormatter.format(
+            this.last.deaths.value
+          )} => ${numberFormatter.format(deaths.value)} \`(+${deaths.increase})\` ⬆️${
+            this.current.deaths.percentageIncrease
+          }%`
+        }
+      ]
+    };
+    if (this.monitorName === 'UK') {
+      embed.fields.push({
+        name: 'Italy Cases (-14 Days)',
+        value: numberFormatter.format(this.italyData.cases)
+      });
+      embed.fields.push({
+        name: 'Italy Deaths (-14 Days)',
+        value: numberFormatter.format(this.italyData.deaths)
+      });
+    }
+    console.log(embed);
+    sendHook(this.monitorName, this.webhookURL, embed)
+      .then(res => {
+        log.log(`[ ${this.monitorName} ] --> Sent Webhook [${res}]`);
+        this.last = this.current;
+        this.current = undefined;
+        this.italyData = undefined;
+        this.last.previousUpdate = new Date().toISOString();
+        this.run();
+      })
+      .catch(err => {
+        throw err;
+      });
+  }
+}
+
+class MonitorManger {
+  async start() {
+    for (let monitorConfig of config.monitorsConfig) {
+      new CoronaMonitor(monitorConfig);
     }
   }
 }
 
-function getDelayTime() {
-  const startTimeSplit = config.startTime.split(':');
-  const startTimeDate = new Date();
-  startTimeDate.setHours(startTimeSplit[0]);
-  startTimeDate.setMinutes(startTimeSplit[1]);
-  startTimeDate.setSeconds(startTimeSplit[2]);
-  startTimeDate.setMilliseconds(startTimeSplit[3]);
-  if (startTimeDate < new Date()) {
-    // * If it has passed the start time for the current day
-    log.log('Running tomorrow');
-    startTimeDate.setDate(startTimeDate.getDate() + 1);
-  }
-  const delayTime = startTimeDate - new Date();
-  startMonitor(delayTime);
-}
+const MM = new MonitorManger();
+MM.start();
 
-async function startMonitor(delayTime) {
-  log.message(`Waiting ${delayTime / 1000} seconds`);
-  await delay(delayTime);
-  getInfectedCount();
-}
-
-function getInfectedCount() {
-  got(config.apiURL)
-    .json()
-    .then(response => {
-      if (_.isEqual(countryDataTemp.countryData, response)) {
-        console.log('No Change');
-        start();
-      } else {
-        console.log(response);
-        sendHook(response);
-      }
-    })
-    .catch(err => console.log(err));
-}
-
-function sendHook(countryData) {
-  const jsonData = {
-    username: 'COVID-19',
-    avatar_url:
-      'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
-    content: 'Corona Virus Update',
-    embeds: [
-      {
-        title: 'COVID-19 cases',
-        color: parseInt('FF0000', 16),
-        timestamp: new Date().toISOString(),
-        // thumbnail: {
-        //   url:
-        //     'https://assets.publishing.service.gov.uk/static/opengraph-image-a1f7d89ffd0782738b1aeb0da37842d8bd0addbd724b8e58c3edbc7287cc11de.png'
-        // },
-        fields: [
-          {
-            name: 'Last Update',
-            value: countryDataTemp.lastUpdated
-          },
-          {
-            name: 'Cases',
-            value: `${countryData.cases} (+${
-              countryDataTemp.countryData
-                ? countryData.cases - countryDataTemp.countryData.cases
-                : 'No past data'
-            })`
-          },
-          {
-            name: 'Deaths',
-            value: `${countryData.deaths} (+${
-              countryDataTemp.countryData
-                ? countryData.deaths - countryDataTemp.countryData.deaths
-                : 'No past data'
-            })`
-          },
-          {
-            name: 'Active',
-            value: `${countryData.active} (+${
-              countryDataTemp.countryData
-                ? countryData.active - countryDataTemp.countryData.active
-                : 'No past data'
-            })`
-          },
-          {
-            name: 'Recovered',
-            value: `${countryData.recovered} (+${
-              countryDataTemp.countryData
-                ? countryData.recovered - countryDataTemp.countryData.recovered
-                : 'No past data'
-            })`
-          },
-          {
-            name: 'Critical',
-            value: `${countryData.critical} (+${
-              countryDataTemp.countryData
-                ? countryData.critical - countryDataTemp.countryData.critical
-                : 'No past data'
-            })`
-          }
-        ]
-      }
-    ]
-  };
-  console.log(jsonData.embeds[0].fields);
-  got
-    .post(config.webhookURL, {
-      json: jsonData
-    })
-    .then(res => {
-      console.log(res.statusCode);
-      finish(countryData);
-    })
-    .catch(err => console.log(err));
-}
-
-function finish(countryData) {
-  console.log(countryData);
-  countryDataTemp.countryData = countryData;
-  countryDataTemp.lastUpdated = new Date().toISOString();
-  start();
+function sendHook(name, webhookURL, embed) {
+  return new Promise((resolve, reject) => {
+    got
+      .post(webhookURL, {
+        json: {
+          username: 'COVID-19',
+          avatar_url:
+            'https://www.rcplondon.ac.uk/sites/default/files/styles/sidebar-landscape/public/media/2871-2560x852_0.png?itok=m4HHeMr7',
+          content: `${name} Corona Virus Update`,
+          embeds: [embed]
+        }
+      })
+      .then(res => {
+        resolve(res.statusCode);
+      })
+      .catch(err => reject(err));
+  });
 }
