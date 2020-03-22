@@ -10,8 +10,7 @@ class CoronaMonitor {
   constructor({ name, apiURL, webhookURL }) {
     this.monitorName = name;
     this.apiURL = apiURL;
-    this.webhookURL =
-      webhookURL;
+    this.webhookURL = webhookURL;
     this.italyData = undefined;
     this.current = undefined;
     this.last = {
