@@ -1,5 +1,6 @@
 {
   "delayTime": "10",
+  "sendStartMsg": false,
   "monitorsConfig": [
     {
       "name": "UK",
