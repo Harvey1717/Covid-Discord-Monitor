@@ -142,7 +142,7 @@ class CoronaMonitor {
       });
     }
     console.log(embed);
-    if ((this.last.previousUpdate === undefined && config.sendStartMsg) === false)
+    if (this.last.previousUpdate === undefined && config.sendStartMsg === false)
       return this.cleanup();
     sendHook(this.monitorName, this.webhookURL, embed)
       .then(res => {
