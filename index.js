@@ -22,7 +22,7 @@ class CoronaMonitor {
   }
 
   async run() {
-    if (this.last.previousUpdate === undefined) {
+    if (this.last.previousUpdate === undefined && config.sendStartMsg) {
       this.getInfectedCount();
     } else {
       log.log(`[ ${this.monitorName} ] --> Waiting for ${config.delayTime} minutes`);
@@ -117,17 +117,17 @@ class CoronaMonitor {
           name: 'Cases',
           value: `${numberFormatter.format(
             this.last.cases.value
-          )} => ${numberFormatter.format(cases.value)} \`(+${cases.increase})\` ⬆️${
-            cases.percentageIncrease
-          }%`
+          )} => ${numberFormatter.format(cases.value)} \`(+${
+            cases.increase
+          })\` ⬆️${parseFloat(cases.percentageIncrease.toFixed(5))}%`
         },
         {
           name: 'Deaths',
           value: `${numberFormatter.format(
             this.last.deaths.value
-          )} => ${numberFormatter.format(deaths.value)} \`(+${deaths.increase})\` ⬆️${
-            this.current.deaths.percentageIncrease
-          }%`
+          )} => ${numberFormatter.format(deaths.value)} \`(+${
+            deaths.increase
+          })\` ⬆️${parseFloat(this.current.deaths.percentageIncrease.toFixed(5))}%`
         }
       ]
     };
