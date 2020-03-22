@@ -22,7 +22,7 @@ class CoronaMonitor {
   }
 
   async run() {
-    if (this.last.previousUpdate === undefined && config.sendStartMsg) {
+    if (this.last.previousUpdate === undefined) {
       this.getInfectedCount();
     } else {
       log.log(`[ ${this.monitorName} ] --> Waiting for ${config.delayTime} minutes`);
@@ -142,6 +142,7 @@ class CoronaMonitor {
       });
     }
     console.log(embed);
+    if (config.sendStartMsg === false) return this.cleanup();
     sendHook(this.monitorName, this.webhookURL, embed)
       .then(res => {
         log.log(`[ ${this.monitorName} ] --> Sent Webhook [${res}]`);
