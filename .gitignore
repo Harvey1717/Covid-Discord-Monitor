@@ -117,3 +117,4 @@ dist
 # Custom
 
 testing.js
+.DS_Store
