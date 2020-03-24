@@ -23,6 +23,8 @@ class CoronaMonitor {
 
   async run() {
     if (this.last.previousUpdate === undefined) {
+      // * First run
+      log.message(`[ ${this.monitorName} ] --> Getting initial data.`);
       this.getInfectedCount();
     } else {
       log.log(`[ ${this.monitorName} ] --> Waiting for ${config.delayTime} minutes`);
@@ -74,7 +76,6 @@ class CoronaMonitor {
         };
       }
     }
-    console.log(this.current);
     if (this.monitorName === 'UK') {
       this.getItaly14DaysAgo();
     } else {
@@ -141,9 +142,10 @@ class CoronaMonitor {
         value: numberFormatter.format(this.italyData.deaths)
       });
     }
-    console.log(embed);
-    if (this.last.previousUpdate === undefined && config.sendStartMsg === false)
+    if (this.last.previousUpdate === undefined && config.sendStartMsg === false) {
+      log.cyan(`[ ${this.monitorName} ] --> Not sending inital hook`);
       return this.cleanup();
+    }
     sendHook(this.monitorName, this.webhookURL, embed)
       .then(res => {
         log.log(`[ ${this.monitorName} ] --> Sent Webhook [${res}]`);
