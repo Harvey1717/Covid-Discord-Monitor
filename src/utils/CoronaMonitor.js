@@ -3,7 +3,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const log = require('@harvey1717/logger')();
 const sendHook = require('./sendHook');
-const config = require('../config.json');
+const config = require('../../config.json');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const numberFormatter = new Intl.NumberFormat('en-GB');
 
