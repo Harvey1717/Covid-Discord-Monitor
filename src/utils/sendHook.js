@@ -1,3 +1,5 @@
+const got = require('got');
+
 module.exports = function sendHook(name, webhookURL, embed) {
   return new Promise((resolve, reject) => {
     got
