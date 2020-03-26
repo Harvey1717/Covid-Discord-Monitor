@@ -1,6 +1,6 @@
 # Corona Virus Monitor
 
-This is a corona virus monitor that fetches data from this [API](https://corona.lmao.ninja), details can be found [here](https://github.com/NovelCOVID/API), it then sends updates to a Discord webhook.
+This is a corona virus monitor that fetches data from this [API](https://github.com/NovelCOVID/API), it then sends updates to a Discord webhook.
 
 ## Getting Started
 
