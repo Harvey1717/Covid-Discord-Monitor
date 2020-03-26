@@ -35,9 +35,8 @@ pnpm install
 
 ## Setup
 
-Rename `config-example.json` to `config.json`.
-
-Fill in the required fields.
+1. Rename `config-example.json` to `config.json`.
+2. Fill in the required fields.
 
 ---
 
