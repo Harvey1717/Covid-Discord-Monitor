@@ -1,10 +1,10 @@
 # Corona Virus Monitor
 
-This is a corona virus monitor that fetches data from this [API](http://www.dropwizard.io/1.0.2/docs/), details can be found [here](https://github.com/NovelCOVID/API), it then sends updates to a Discord webhook.
+This is a corona virus monitor that fetches data from this [API](https://corona.lmao.ninja), details can be found [here](https://github.com/NovelCOVID/API), it then sends updates to a Discord webhook.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -19,7 +19,7 @@ moment (Date Parsing)
 
 ### Installing
 
-This project uses pnpm as it's package manager. You can read about it's benefits and install [here](https://pnpm.js.org/).
+> This project uses pnpm as it's package manager. You can read about the install and it's benefits [here](https://pnpm.js.org/).
 
 Install pnpm
 
@@ -32,6 +32,17 @@ Install required packages using pnpm
 ```
 pnpm install
 ```
+
+## Setup
+
+Rename `config-example.json` to `config.json`.
+
+Fill in the required fields.
+
+---
+
+- You can find a guide to Discord Webhooks [here](https://google.com).
+- The `apiURL` needs to be a valid endpoint from the `https://corona.lmao.ninja` API.
 
 ## Running
 
