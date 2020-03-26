@@ -33,7 +33,7 @@ Install required packages using pnpm
 pnpm install
 ```
 
-## Setup
+### Setup
 
 1. Rename `config-example.json` to `config.json`.
 2. Fill in the required fields.
