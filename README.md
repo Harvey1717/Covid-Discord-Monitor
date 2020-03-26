@@ -49,10 +49,18 @@ pnpm install
 node index.js
 ```
 
-## Versioning
+OR
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+```
+node .
+```
+
+## Versioning
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+---
+
+Made with ❤ by [@HarveyDMC](https://twitter.com/HarveyDMC)
