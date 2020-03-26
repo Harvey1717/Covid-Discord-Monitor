@@ -2,7 +2,7 @@
 
 This is a corona virus monitor that fetches data from this [API](https://github.com/NovelCOVID/API), it then sends updates to a Discord webhook.
 
-![Webhook Example](https://imgur.com/AD3naeb 'Webhook Example')
+![Webhook Example](https://i.imgur.com/AD3naeb.png 'Webhook Example')
 
 ## Getting Started
 
