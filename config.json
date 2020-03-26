@@ -1,6 +1,6 @@
 {
   "delayTime": "10",
-  "sendStartMsg": true,
+  "sendStartMsg": false,
   "monitorsConfig": [
     {
       "name": "UK",
@@ -16,6 +16,11 @@
       "name": "Spain",
       "apiURL": "https://corona.lmao.ninja/countries/Spain",
       "webhookURL": "https://discordapp.com/api/webhooks/692734467957063731/ehgqURij5bT04bezMmIlkt6BJGaC9eHTvqXfRHY1nvOvgOevZeRkHXrgwdQreKUSsX0y"
+    },
+    {
+      "name": "Worldwide",
+      "apiURL": "https://corona.lmao.ninja/all",
+      "webhookURL": "https://discordapp.com/api/webhooks/690988933441519696/mC4eFQBbRlIie-8uQo9GgDuXPOMmXrFxhZjs-luRbufsEk1Iik0hOZei3SIGpsmeHmPe"
     }
   ]
 }
