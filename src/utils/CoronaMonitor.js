@@ -110,6 +110,9 @@ module.exports = class CoronaMonitor {
       title: 'COVID-19 Cases',
       color: parseInt('0000ff', 16),
       timestamp: new Date().toISOString(),
+      footer: {
+        text: 'By DMC'
+      },
       fields: [
         {
           name: 'Previous Change',
