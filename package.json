@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@harvey1717/logger": "^3.0.0",
+    "@harvey1717/logger": "^4.1.0",
     "got": "^10.6.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0"

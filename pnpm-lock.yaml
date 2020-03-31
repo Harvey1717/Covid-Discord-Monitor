@@ -1,16 +1,16 @@
 dependencies:
-  '@harvey1717/logger': 3.0.0
+  '@harvey1717/logger': 4.1.0
   got: 10.6.0
   lodash: 4.17.15
   moment: 2.24.0
 lockfileVersion: 5.1
 packages:
-  /@harvey1717/logger/3.0.0:
+  /@harvey1717/logger/4.1.0:
     dependencies:
       chalk: 2.4.2
     dev: false
     resolution:
-      integrity: sha512-R+Ukhvu1rn+++D/jP79BC35oxw9hTQvkB2kY400+DROwc9jrsP5iB5UbspkcB+crECKfdUDybe02nCf5v+8ROg==
+      integrity: sha512-2bCz5ciPkhW9uZ+itFZu42/i67VCsauOQoNggeOMIZB2ubz92XLgRCX1p+Ij3BqIOvrxHNDiWo2hPvBG258Enw==
   /@sindresorhus/is/2.1.0:
     dev: false
     engines:
@@ -295,7 +295,7 @@ packages:
     resolution:
       integrity: sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 specifiers:
-  '@harvey1717/logger': ^3.0.0
+  '@harvey1717/logger': ^4.1.0
   got: ^10.6.0
   lodash: ^4.17.15
   moment: ^2.24.0
